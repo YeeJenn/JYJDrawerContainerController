@@ -37,6 +37,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let drawerContainerController = JYJDrawerContainerController(centerViewController: centerNavigationController, leftViewController: leftViewController)
         
         
+        // default is 0.78
+        drawerContainerController.maximunOffsetRatio = 0.75
+        
+        // default is 100
+        drawerContainerController.minvelocityX = 100
+        
+        
         window?.rootViewController = drawerContainerController
         window?.makeKeyAndVisible()
         
