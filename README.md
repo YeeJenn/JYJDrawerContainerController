@@ -1,7 +1,7 @@
 # JYJDrawerContainerController
 A lightweight framework for drawing controller
 #Appearance
-![Demo](http://g.recordit.co/OArQAiHPI6.gif)
+![Demo](http://g.recordit.co/zPFMJf2DN8.gif)
 
 #Built-in
 Copy the file ```JYJDrawerContainerController.swift``` into your project
