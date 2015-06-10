@@ -8,27 +8,50 @@
 //  Copyright (c) 2015 Jim. All rights reserved.
 //
 
+
 import UIKit
 
+/**
+开关状态枚举类型，主要用于记录当前leftViewController是否处于打开状态
+
+- Open:  leftViewController处于打开状态
+- Close: leftViewController处于关闭状态
+*/
 enum ToggleState {
     case Open
     case Close
 }
 
+/**
+*  侧拉控制器，通过手指滑动centerViewController侧拉打开leftViewController
+*/
 class JYJDrawerContainerController: UIViewController {
     
     var centerViewController: UIViewController?
     var leftViewController: UIViewController?
     
-    private var centerViewStopOriginX: CGFloat! // 中间视图的原点x坐标
-    var maximunOffsetRatio: CGFloat = 0.78  // 中间视图最大偏移比例
-    var minvelocityX: CGFloat = 100  //触发toggle的最小手指滑动速度
-    // centerViewController 最大偏移量
-    var maxinumOffsetX: CGFloat {
-        return maximunOffsetRatio * self.view.bounds.width
-    }
+    // centerViewController的待移动位置原点x坐标，起始初始化为0
+    private var centerViewTempOriginX: CGFloat! = 0
+
+    // centerViewController 最大偏移比例
+    var maximunOffsetRatio: CGFloat = 0.78
     
-    var toggleState: ToggleState = .Close   //左侧视图的开闭状态，初始默认为关闭
+    // centerViewController 最大偏移量
+    private var maxinumOffsetX: CGFloat {return maximunOffsetRatio * self.view.bounds.width}
+    
+    // centerViewController 最小缩放比例
+    var minmunScaleRatio: CGFloat = 0.8
+    
+    // 触发toggle的最小手指滑动速度
+    var minVelocityX: CGFloat = 100
+    
+    // 侧拉动画开始到结束的时间
+    var animationDuration: Double = 0.2
+    
+    //左侧视图的开闭状态，初始默认为关闭
+    var toggleState: ToggleState = .Close
+    
+    
     
     init(centerViewController: UIViewController, leftViewController: UIViewController){
         
@@ -42,12 +65,11 @@ class JYJDrawerContainerController: UIViewController {
     required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
+    
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
-        centerViewStopOriginX = centerViewController!.view.frame.origin.x
         
     
         if leftViewController != nil && centerViewController != nil {
@@ -82,36 +104,53 @@ class JYJDrawerContainerController: UIViewController {
         // 手势在container中的x轴移动距离
         var panOffsetX = recognizer.translationInView(self.view).x
         
+        // centerViewController 将要移动到的位置
+        let centerViewWillToOrginX = centerViewTempOriginX + panOffsetX
         
         // 检测侧滑边界，最大不能超过maxium， 最小不能超过0
-        if centerViewStopOriginX + panOffsetX <= maxinumOffsetX && centerViewStopOriginX + panOffsetX >= 0 {
-            // 更新中间视图位置
-            transformCenterViewByoffsetX(centerViewStopOriginX + panOffsetX)
+        if centerViewWillToOrginX <= maxinumOffsetX && centerViewWillToOrginX >= 0 {
+            
+            // 改变中间视图位置
+            transformCenterViewToX(centerViewWillToOrginX)
         }
        
     
-        // 拖动结束后
+        // 如果手指滑动已经结束
         if recognizer.state == .Ended {
             
-            // 判断手势pan的速度
+            // 判断手指滑动速度，如果大于触发开关toggle的阈值，则调用toggleLeftViewController
             let velocityX = recognizer.velocityInView(self.view).x
-            if abs(velocityX) > minvelocityX {
+            if abs(velocityX) >= minVelocityX {
                 toggleLeftViewController()
             }else{
-                // 如果滑动超过maximunOffsetX的一半，则停靠右边。反之停靠在左边
-                if centerViewController!.view.frame.origin.x > 1/2 * maxinumOffsetX {
-                    showLeftViewController()
-                }else if centerViewController!.view.frame.origin.x < 1/2 * maxinumOffsetX {
-                    hideLeftViewController()
+                
+                // 计算剩余滑动时间
+                let currentX = centerViewController!.view.frame.origin.x
+                var leftDuration: Double!
+                if panOffsetX > 0 {
+                    leftDuration = animationDuration * Double((maxinumOffsetX - currentX)/maxinumOffsetX)
+                }else{
+                    leftDuration = animationDuration * Double(currentX/maxinumOffsetX)
+                }
+                
+                
+                // 如果目前centerViewController的滑动距离超过maximunOffsetX的一半，则打开leftViewController，否则关闭leftViewController
+                
+                if centerViewController!.view.frame.origin.x > maxinumOffsetX/2 {
+                    showLeftViewControllerWithDuration(leftDuration)
+                }else if centerViewController!.view.frame.origin.x < maxinumOffsetX/2 {
+                    hideLeftViewControllerWithDuration(leftDuration)
                 }
             }
-            
             // 更新centerViewStopOriginX
-            centerViewStopOriginX = centerViewController!.view.frame.origin.x
+            centerViewTempOriginX = centerViewWillToOrginX
+            
         }
 
         
     }
+    
+    
     
     /**
     中间视图控制器(centerViewController)的触摸手势事件
@@ -122,45 +161,52 @@ class JYJDrawerContainerController: UIViewController {
         
         // 如果目前左侧视图为打开状态，则关闭。
         if toggleState == .Open {
-            hideLeftViewController()
-        } else {
-            showLeftViewController()
+            hideLeftViewControllerWithDuration(animationDuration)
         }
     }
     
     
     
     /**
-    显示左侧视图
+    显示左侧视图，并且改变toggleState为Open, 并且更新centerTempOriginX 为 maxinumOffsetX
     */
-    func showLeftViewController(){
-        UIView.animateWithDuration(0.3, delay: 0, options: .CurveEaseInOut, animations: { () -> Void in
-            self.transformCenterViewByoffsetX(self.maxinumOffsetX)
-        }, completion: nil)
+    func showLeftViewControllerWithDuration(duration: Double){
         
-        // 开关状态变为开启
-        toggleState = .Open
+        UIView.animateWithDuration(duration, delay: 0, options: .CurveLinear, animations: { () -> Void in
+            self.transformCenterViewToX(self.maxinumOffsetX)
+        }){[unowned self](finished) -> Void in
+            self.toggleState = .Open
+            self.centerViewTempOriginX = self.maxinumOffsetX
+        }
+
     }
+    
+    
     
     
     /**
-    隐藏左侧视图
+    隐藏左侧视图，并且改变toggleState为Close, 并且更新centerTempOriginX 为 0
     */
-    func hideLeftViewController(){
-        
-        UIView.animateWithDuration(0.3, delay: 0, options: .CurveEaseInOut, animations: { () -> Void in
-            self.transformCenterViewByoffsetX(0)
-        }, completion: nil)
-        
-        // 开关状态变为关闭
-        toggleState = .Close
+    func hideLeftViewControllerWithDuration(duration: Double){
+        UIView.animateWithDuration(duration, delay: 0, options: .CurveLinear, animations: { () -> Void in
+            self.transformCenterViewToX(0)
+        }){[unowned self](finished) -> Void in
+            self.toggleState = .Close
+            self.centerViewTempOriginX = 0
+        }
     }
     
+    
+    
+    
+    /**
+    打开或者关闭leftViewController。根据目前leftViewController的状态自动判断是打开还是关闭
+    */
     func toggleLeftViewController(){
         if toggleState == .Open {
-            hideLeftViewController()
+            hideLeftViewControllerWithDuration(animationDuration)
         }else{
-            showLeftViewController()
+            showLeftViewControllerWithDuration(animationDuration)
         }
     }
     
@@ -170,20 +216,26 @@ class JYJDrawerContainerController: UIViewController {
     
     :param: offsetX centerView离最左边的横坐标滑动偏移量
     */
-    private func transformCenterViewByoffsetX(offsetX: CGFloat){
+    private func transformCenterViewToX(x: CGFloat){
         
-        if offsetX == 0 {
-            toggleState = .Close
-        } else if offsetX == maxinumOffsetX {
-            toggleState = .Open
-        }
+        //centerView 大小缩放比例
+        let sizeRatio = (minmunScaleRatio - 1)/maxinumOffsetX * x + 1
         
-        let sizeRatio = (0.8 - 1)/(self.maxinumOffsetX - 0) * offsetX + 1  //centerView 大小缩放比例
-        self.centerViewController!.view.transform = CGAffineTransformScale(CGAffineTransformIdentity, sizeRatio, sizeRatio)
-        self.centerViewController!.view.frame.origin.x = offsetX    //这行代码一定要写在scale后面
+        // 平移变换
+        let translation = CGAffineTransformMakeTranslation(x, 0)
+        // 缩放变化
+        let scale = CGAffineTransformScale(CGAffineTransformIdentity, sizeRatio, sizeRatio)
+        
+        // 组合变换
+        centerViewController!.view.transform = CGAffineTransformConcat(translation, scale)
+
     }
     
 }
+
+
+
+
 
 /**
 *  对UIViewController扩展，为了在任何DrawerController的子视图控制器中都能通过self.drawerContainerViewController访问到侧拉控制器

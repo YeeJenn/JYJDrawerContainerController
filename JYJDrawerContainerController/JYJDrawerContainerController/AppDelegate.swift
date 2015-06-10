@@ -41,7 +41,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         drawerContainerController.maximunOffsetRatio = 0.75
         
         // default is 100
-        drawerContainerController.minvelocityX = 100
+        drawerContainerController.minVelocityX = 100
         
         
         window?.rootViewController = drawerContainerController
