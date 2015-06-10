@@ -40,7 +40,7 @@ class JYJDrawerContainerController: UIViewController {
     private var maxinumOffsetX: CGFloat {return maximunOffsetRatio * self.view.bounds.width}
     
     // centerViewController 最小缩放比例
-    var minmunScaleRatio: CGFloat = 0.8
+    var minimumScaleRatio: CGFloat = 0.8
     
     // 触发toggle的最小手指滑动速度
     var minVelocityX: CGFloat = 100
@@ -219,7 +219,7 @@ class JYJDrawerContainerController: UIViewController {
     private func transformCenterViewToX(x: CGFloat){
         
         //centerView 大小缩放比例
-        let sizeRatio = (minmunScaleRatio - 1)/maxinumOffsetX * x + 1
+        let sizeRatio = (minimumScaleRatio - 1)/maxinumOffsetX * x + 1
         
         // 平移变换
         let translation = CGAffineTransformMakeTranslation(x, 0)

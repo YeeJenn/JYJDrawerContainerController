@@ -25,6 +25,9 @@ Copy the file ```JYJDrawerContainerController.swift``` into your project
     // the minimum velocity for triggering toggleLeftViewController , default is 100
     drawerContainerController.minVelocityX = 120
     
+    // the minimum scale for centerViewController, default is 0.8
+    drawerContainerController.maximunOffsetRatio = 0.6
+    
     // the duration for centerViewController moving from left to right, default is 0.20
     drawerContainerController.animationDuration = 0.15
 	

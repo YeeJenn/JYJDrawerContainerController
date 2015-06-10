@@ -13,7 +13,7 @@ class CenterViewController: UIViewController {
     
     
     var maximunOffsetRatioLabel: UILabel!
-    var minmunScaleRatioLabel: UILabel!
+    var minimumScaleRatioLabel: UILabel!
     var animationDurationLabel: UILabel!
     
 
@@ -39,17 +39,17 @@ class CenterViewController: UIViewController {
         
         
         
-        minmunScaleRatioLabel = UILabel()
-        minmunScaleRatioLabel.text = "MaximunOffsetRatio = 0.80"
-        minmunScaleRatioLabel.setTranslatesAutoresizingMaskIntoConstraints(false)
-        self.view.addSubview(minmunScaleRatioLabel)
+        minimumScaleRatioLabel = UILabel()
+        minimumScaleRatioLabel.text = "MinimumScaleRatio = 0.80"
+        minimumScaleRatioLabel.setTranslatesAutoresizingMaskIntoConstraints(false)
+        self.view.addSubview(minimumScaleRatioLabel)
         
-        let minmunScaleRatioSlider = UISlider()
-        maximunOffsetRatioSlider.maximumValue = 1
-        minmunScaleRatioSlider.value = 0.8
-        minmunScaleRatioSlider.addTarget(self, action: "minmunScaleRatioSliderDidChangeValue:", forControlEvents: .ValueChanged)
-        minmunScaleRatioSlider.setTranslatesAutoresizingMaskIntoConstraints(false)
-        self.view.addSubview(minmunScaleRatioSlider)
+        let minimumScaleRatioSlider = UISlider()
+        minimumScaleRatioSlider.maximumValue = 1
+        minimumScaleRatioSlider.value = 0.8
+        minimumScaleRatioSlider.addTarget(self, action: "minimumScaleRatioSliderDidChangeValue:", forControlEvents: .ValueChanged)
+        minimumScaleRatioSlider.setTranslatesAutoresizingMaskIntoConstraints(false)
+        self.view.addSubview(minimumScaleRatioSlider)
         
         
         
@@ -74,15 +74,15 @@ class CenterViewController: UIViewController {
         
         // AutoLayout UI
         
-        let dic = ["maximunOffsetRatioLabel":maximunOffsetRatioLabel, "maximunOffsetRatioSlider":maximunOffsetRatioSlider, "minmunScaleRatioLabel":minmunScaleRatioLabel,"animationDurationLabel":animationDurationLabel,  "animationDurationSlider":animationDurationSlider, "minmunScaleRatioSlider":minmunScaleRatioSlider]
+        let dic = ["maximunOffsetRatioLabel":maximunOffsetRatioLabel, "maximunOffsetRatioSlider":maximunOffsetRatioSlider, "minimumScaleRatioLabel": minimumScaleRatioLabel,"animationDurationLabel":animationDurationLabel, "animationDurationSlider":animationDurationSlider, "minimumScaleRatioSlider":minimumScaleRatioSlider]
  
         
         self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|-[maximunOffsetRatioLabel]-|", options: nil, metrics: nil, views: dic))
         self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|-[maximunOffsetRatioSlider]-|", options: nil, metrics: nil, views: dic))
         
         
-        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|-[minmunScaleRatioLabel]-|", options: nil, metrics: nil, views: dic))
-        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|-[minmunScaleRatioSlider]-|", options: nil, metrics: nil, views: dic))
+        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|-[minimumScaleRatioLabel]-|", options: nil, metrics: nil, views: dic))
+        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|-[minimumScaleRatioSlider]-|", options: nil, metrics: nil, views: dic))
         
         
         self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|-[animationDurationLabel]-|", options: nil, metrics: nil, views: dic))
@@ -90,9 +90,9 @@ class CenterViewController: UIViewController {
         
         
         
-        self.view.addConstraint(NSLayoutConstraint(item: minmunScaleRatioSlider, attribute: .CenterY, relatedBy: .Equal, toItem: self.view, attribute: .CenterY, multiplier: 1, constant: 0))
+        self.view.addConstraint(NSLayoutConstraint(item: minimumScaleRatioSlider, attribute: .CenterY, relatedBy: .Equal, toItem: self.view, attribute: .CenterY, multiplier: 1, constant: 0))
         
-        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:[maximunOffsetRatioLabel]-[maximunOffsetRatioSlider]-[minmunScaleRatioLabel]-[minmunScaleRatioSlider]-[animationDurationLabel]-[animationDurationSlider]", options: nil, metrics: nil, views: dic))
+        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:[maximunOffsetRatioLabel]-[maximunOffsetRatioSlider]-[minimumScaleRatioLabel]-[minimumScaleRatioSlider]-[animationDurationLabel]-[animationDurationSlider]", options: nil, metrics: nil, views: dic))
         
     }
     
@@ -106,9 +106,9 @@ class CenterViewController: UIViewController {
         self.drawerContainerViewController?.maximunOffsetRatio = CGFloat(maximunOffsetRatioSlider.value)
     }
     
-    func minmunScaleRatioSliderDidChangeValue(minmunScaleRatioSlider: UISlider){
-        minmunScaleRatioLabel.text = NSString(format: "MinmunScaleRatio = %.2f", minmunScaleRatioSlider.value) as String
-        self.drawerContainerViewController?.minmunScaleRatio = CGFloat(minmunScaleRatioSlider.value)
+    func minimumScaleRatioSliderDidChangeValue(minimumScaleRatioSlider: UISlider){
+        minimumScaleRatioLabel.text = NSString(format: "MinimumScaleRatio = %.2f", minimumScaleRatioSlider.value) as String
+        self.drawerContainerViewController?.minimumScaleRatio = CGFloat(minimumScaleRatioSlider.value)
     }
     
     func animationDurationSliderDidChangeValue(animationDurationSlider: UISlider){
