@@ -1,7 +1,7 @@
 # JYJDrawerContainerController
 A lightweight framework for drawing controller
-#Apearance
-![](http://g.recordit.co/Gh51fyjlEE.gif)
+#Appearance
+![Demo](http://g.recordit.co/OArQAiHPI6.gif)
 
 #Built-in
 Copy the file ```JYJDrawerContainerController.swift``` into your project
@@ -23,7 +23,10 @@ Copy the file ```JYJDrawerContainerController.swift``` into your project
     drawerContainerController.maximunOffsetRatio = 0.75
         
     // the minimum velocity for triggering toggleLeftViewController , default is 100
-    drawerContainerController.minvelocityX = 120
+    drawerContainerController.minVelocityX = 120
+    
+    // the duration for centerViewController moving from left to right, default is 0.20
+    drawerContainerController.animationDuration = 0.15
 	
 	window?.rootViewController = drawerContainerController
 	
@@ -31,7 +34,7 @@ Copy the file ```JYJDrawerContainerController.swift``` into your project
 
 # Toggle Menu
 
-You can use ```toggleLeftViewController``` Method to make leftViewController open (if it is closed) or close (if it is open)
+You can use ```toggleLeftViewController``` method to make leftViewController open (if it is closed) or close (if it is open)
 
 # How to access drawer container controller?
 You can access ```drawerContainerController``` using ```self.drawerContainerController``` in any drawerContainerController's child view controllers

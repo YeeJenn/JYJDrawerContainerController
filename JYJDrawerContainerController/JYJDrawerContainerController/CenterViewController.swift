@@ -56,7 +56,7 @@ class CenterViewController: UIViewController {
         
         
         animationDurationLabel = UILabel()
-        animationDurationLabel.text = "MaximunOffsetRatio = 0.20"
+        animationDurationLabel.text = "AnimationDuration = 0.20"
         animationDurationLabel.setTranslatesAutoresizingMaskIntoConstraints(false)
         self.view.addSubview(animationDurationLabel)
         
