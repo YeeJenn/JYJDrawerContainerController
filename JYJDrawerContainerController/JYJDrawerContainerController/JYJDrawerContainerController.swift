@@ -25,14 +25,14 @@ enum ToggleState {
 /**
 *  侧拉控制器，通过手指滑动centerViewController侧拉打开leftViewController
 */
-class JYJDrawerContainerController: UIViewController {
+class JYJDrawerContainerController: UIViewController, UIGestureRecognizerDelegate {
     
     var centerViewController: UIViewController?
     var leftViewController: UIViewController?
     
     // centerViewController的待移动位置原点x坐标，起始初始化为0
     private var centerViewTempOriginX: CGFloat! = 0
-
+    
     // centerViewController 最大偏移比例
     var maximunOffsetRatio: CGFloat = 0.78
     
@@ -52,7 +52,6 @@ class JYJDrawerContainerController: UIViewController {
     var toggleState: ToggleState = .Close
     
     
-    
     init(centerViewController: UIViewController, leftViewController: UIViewController){
         
         self.leftViewController = leftViewController
@@ -67,11 +66,11 @@ class JYJDrawerContainerController: UIViewController {
     }
     
     
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-    
+        
         if leftViewController != nil && centerViewController != nil {
             self.view.addSubview(leftViewController!.view)
             self.view.addSubview(centerViewController!.view)
@@ -85,6 +84,7 @@ class JYJDrawerContainerController: UIViewController {
             
             // 给中间视图添加tap手势
             let centerTapGestureRecogizer = UITapGestureRecognizer(target: self, action: "centerViewDidTap:")
+            centerTapGestureRecogizer.delegate = self
             centerViewController!.view.addGestureRecognizer(centerTapGestureRecogizer)
         }
         
@@ -113,8 +113,8 @@ class JYJDrawerContainerController: UIViewController {
             // 改变中间视图位置
             transformCenterViewToX(centerViewWillToOrginX)
         }
-       
-    
+        
+        
         // 如果手指滑动已经结束
         if recognizer.state == .Ended {
             
@@ -146,7 +146,7 @@ class JYJDrawerContainerController: UIViewController {
             centerViewTempOriginX = centerViewWillToOrginX
             
         }
-
+        
         
     }
     
@@ -168,19 +168,35 @@ class JYJDrawerContainerController: UIViewController {
     
     
     /**
+    如果leftViewController处于关闭状态，那么tap事件应该交给下级响应者来处理
+    
+    :param: gestureRecognizer tap手势
+    :param: touch             tap触摸事件
+    
+    :returns: 如果当前处于关闭状态那么返回false，如果处于开启状态返回true
+    */
+    func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldReceiveTouch touch: UITouch) -> Bool {
+        if gestureRecognizer is UITapGestureRecognizer && toggleState == .Close {
+            return false
+        }
+        return true
+    }
+    
+    
+    
+    /**
     显示左侧视图，并且改变toggleState为Open, 并且更新centerTempOriginX 为 maxinumOffsetX
     */
     func showLeftViewControllerWithDuration(duration: Double){
         
         UIView.animateWithDuration(duration, delay: 0, options: .CurveLinear, animations: { () -> Void in
             self.transformCenterViewToX(self.maxinumOffsetX)
-        }){[unowned self](finished) -> Void in
-            self.toggleState = .Open
-            self.centerViewTempOriginX = self.maxinumOffsetX
+            }){[unowned self](finished) -> Void in
+                self.toggleState = .Open
+                self.centerViewTempOriginX = self.maxinumOffsetX
         }
-
+        
     }
-    
     
     
     
@@ -190,9 +206,9 @@ class JYJDrawerContainerController: UIViewController {
     func hideLeftViewControllerWithDuration(duration: Double){
         UIView.animateWithDuration(duration, delay: 0, options: .CurveLinear, animations: { () -> Void in
             self.transformCenterViewToX(0)
-        }){[unowned self](finished) -> Void in
-            self.toggleState = .Close
-            self.centerViewTempOriginX = 0
+            }){[unowned self](finished) -> Void in
+                self.toggleState = .Close
+                self.centerViewTempOriginX = 0
         }
     }
     
@@ -210,7 +226,7 @@ class JYJDrawerContainerController: UIViewController {
         }
     }
     
-
+    
     /**
     通过offsetX, 来改变centerView的位置以及大小
     
@@ -228,7 +244,7 @@ class JYJDrawerContainerController: UIViewController {
         
         // 组合变换
         centerViewController!.view.transform = CGAffineTransformConcat(translation, scale)
-
+        
     }
     
 }
@@ -252,5 +268,5 @@ extension UIViewController {
         }
         return nil
     }
-
+    
 }
