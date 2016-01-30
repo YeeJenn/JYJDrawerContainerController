@@ -61,7 +61,7 @@ class JYJDrawerContainerController: UIViewController, UIGestureRecognizerDelegat
     }
     
     
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     
@@ -96,13 +96,13 @@ class JYJDrawerContainerController: UIViewController, UIGestureRecognizerDelegat
     /**
     中间视图控制器(centerViewController)的拖动手势事件
     
-    :param: recognizer 拖动手势
+    - parameter recognizer: 拖动手势
     */
     func centerViewDidPan(recognizer: UIPanGestureRecognizer) {
         
         
         // 手势在container中的x轴移动距离
-        var panOffsetX = recognizer.translationInView(self.view).x
+        let panOffsetX = recognizer.translationInView(self.view).x
         
         // centerViewController 将要移动到的位置
         let centerViewWillToOrginX = centerViewTempOriginX + panOffsetX
@@ -155,7 +155,7 @@ class JYJDrawerContainerController: UIViewController, UIGestureRecognizerDelegat
     /**
     中间视图控制器(centerViewController)的触摸手势事件
     
-    :param: recogizer 中间视图控制器(centerViewController)的触摸手势
+    - parameter recogizer: 中间视图控制器(centerViewController)的触摸手势
     */
     func centerViewDidTap(recogizer: UITapGestureRecognizer){
         
@@ -170,10 +170,10 @@ class JYJDrawerContainerController: UIViewController, UIGestureRecognizerDelegat
     /**
     如果leftViewController处于关闭状态，那么tap事件应该交给下级响应者来处理
     
-    :param: gestureRecognizer tap手势
-    :param: touch             tap触摸事件
+    - parameter gestureRecognizer: tap手势
+    - parameter touch:             tap触摸事件
     
-    :returns: 如果当前处于关闭状态那么返回false，如果处于开启状态返回true
+    - returns: 如果当前处于关闭状态那么返回false，如果处于开启状态返回true
     */
     func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldReceiveTouch touch: UITouch) -> Bool {
         if gestureRecognizer is UITapGestureRecognizer && toggleState == .Close {
@@ -230,7 +230,7 @@ class JYJDrawerContainerController: UIViewController, UIGestureRecognizerDelegat
     /**
     通过offsetX, 来改变centerView的位置以及大小
     
-    :param: offsetX centerView离最左边的横坐标滑动偏移量
+    - parameter offsetX: centerView离最左边的横坐标滑动偏移量
     */
     private func transformCenterViewToX(x: CGFloat){
         
